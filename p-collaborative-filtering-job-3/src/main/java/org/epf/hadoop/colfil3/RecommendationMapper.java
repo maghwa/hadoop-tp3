@@ -5,9 +5,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 
-public class RecommendationMapper 
-        extends Mapper<LongWritable, Text, Text, UserRecommendation> {
-
+public class RecommendationMapper extends Mapper<LongWritable, Text, Text, UserRecommendation> {
     private Text outputKey = new Text();
 
     @Override
@@ -24,15 +22,15 @@ public class RecommendationMapper
         // Lire le nombre de relations communes
         int commonFriends = Integer.parseInt(parts[1]);
 
-        // Émettre la recommandation dans les deux sens
-        // Premier utilisateur -> Deuxième utilisateur
+        // Émettre une recommandation dans les deux sens
+        // user1 -> user2
         outputKey.set(users[0]);
-        context.write(outputKey, 
-            new UserRecommendation(users[0], users[1], commonFriends));
+        context.write(outputKey, new UserRecommendation(
+            users[0], users[1], commonFriends));
 
-        // Deuxième utilisateur -> Premier utilisateur
+        // user2 -> user1
         outputKey.set(users[1]);
-        context.write(outputKey, 
-            new UserRecommendation(users[1], users[0], commonFriends));
+        context.write(outputKey, new UserRecommendation(
+            users[1], users[0], commonFriends));
     }
 }

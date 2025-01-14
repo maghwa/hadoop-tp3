@@ -1,6 +1,5 @@
 package org.epf.hadoop.colfil2;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -11,6 +10,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.conf.Configuration;
 
 public class ColFilJob2 extends Configured implements Tool {
     @Override
@@ -46,15 +46,15 @@ public class ColFilJob2 extends Configured implements Tool {
         // Définir les classes de mapping et de reducing
         job.setMapperClass(CommonUsersMapper.class);
         job.setReducerClass(CommonUsersReducer.class);
-        
+
         // Définir les types de sortie du Mapper
         job.setMapOutputKeyClass(UserPair.class);
         job.setMapOutputValueClass(IntWritable.class);
 
         // Définir les types de sortie du Reducer
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);  // Changé pour Text au lieu de IntWritable
-        
+        job.setOutputValueClass(IntWritable.class);  // IntWritable au lieu de Text
+
         // Définir le nombre de reducers
         job.setNumReduceTasks(2);
 

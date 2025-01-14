@@ -25,24 +25,17 @@ public class ColFilJob3 extends Configured implements Tool {
             outputPath = args[1];
         } else {
             System.err.println("Usage: ColFilJob3 <input path> <output path>");
-            System.err.println("Arguments reçus : " + args.length);
-            for (int i = 0; i < args.length; i++) {
-                System.err.println("Arg[" + i + "] : " + args[i]);
-            }
             return -1;
         }
-
-        System.out.println("Using input path: " + inputPath);
-        System.out.println("Using output path: " + outputPath);
 
         Configuration conf = getConf();
         Job job = Job.getInstance(conf, "Job3: Friend Recommendations");
         job.setJarByClass(getClass());
 
-        // Définir les formats d'entrée et de sortie
+        // Définir le format d'entrée
         job.setInputFormatClass(TextInputFormat.class);
         
-        // Définir les classes de mapping et de reducing
+        // Définir les classes de mapping et reducing
         job.setMapperClass(RecommendationMapper.class);
         job.setReducerClass(RecommendationReducer.class);
 
@@ -54,7 +47,7 @@ public class ColFilJob3 extends Configured implements Tool {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        // Un seul reducer comme demandé
+        // Un seul reducer comme demandé dans l'énoncé
         job.setNumReduceTasks(1);
 
         // Définir les chemins d'entrée et de sortie
@@ -65,7 +58,6 @@ public class ColFilJob3 extends Configured implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Démarrage de ColFilJob3");
         int exitCode = ToolRunner.run(new Configuration(), new ColFilJob3(), args);
         System.exit(exitCode);
     }

@@ -6,10 +6,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 import java.io.IOException;
 
 public class CommonUsersReducer 
-        extends Reducer<UserPair, IntWritable, Text, Text> {
+        extends Reducer<UserPair, IntWritable, Text, IntWritable> {
     
     private Text outputKey = new Text();
-    private Text result = new Text();
+    private IntWritable result = new IntWritable();
 
     @Override
     protected void reduce(UserPair key, Iterable<IntWritable> values, Context context)
@@ -21,19 +21,17 @@ public class CommonUsersReducer
         // Parcourir toutes les valeurs
         for (IntWritable val : values) {
             if (val.get() == -1) {
+                // S'ils sont déjà amis, on ne veut pas les voir dans les résultats
                 areDirectFriends = true;
-            } else {
-                sum += val.get();
+                break;
             }
+            sum += val.get();
         }
 
-        // N'émettre que si il y a des relations en commun ou si ce sont des amis directs
-        if (sum > 0 || areDirectFriends) {
+        // Émettre seulement s'ils ne sont pas amis directs et ont des amis en commun
+        if (!areDirectFriends && sum > 0) {
             outputKey.set(key.toString());
-            // Format de sortie : "nombreRelationsCommunes,0" si amis directs
-            // ou "nombreRelationsCommunes" sinon
-            String resultStr = sum + (areDirectFriends ? ",0" : "");
-            result.set(resultStr);
+            result.set(sum);
             context.write(outputKey, result);
         }
     }
